@@ -32,8 +32,6 @@ class DioHttp {
   DioHttp._internal();
 
   Future init() async{
-    Future.delayed(const Duration(seconds: 2));
-
     /// 初始化dio
     BaseOptions options = BaseOptions(
         connectTimeout: _connectTimeout,
@@ -52,7 +50,7 @@ class DioHttp {
         requestBody: true,
         responseHeader: true,
         responseBody: true));
-
+    debugPrint("benyq init end");
   }
 
   Future<HttpResult> request(

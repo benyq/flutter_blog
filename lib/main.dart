@@ -4,8 +4,7 @@ import 'page/main_page.dart';
 
 void main() async{
   final DioHttp _dioHttp = DioHttp();
-  WidgetsFlutterBinding.ensureInitialized();
-  _dioHttp.init();
+  await _dioHttp.init();
   runApp(const MyApp());
   debugPrint("benyq runApp");
 }
