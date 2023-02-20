@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blog/http/request.dart';
 import 'package:flutter_blog/page/complex/home_page.dart';
 import 'package:flutter_blog/page/complex/question_answer_page.dart';
+import 'package:flutter_blog/page/complex/search_page.dart';
 import 'package:flutter_blog/page/complex/square_page.dart';
 
 class ComplexPage extends StatefulWidget {
@@ -46,7 +47,11 @@ class _ComplexPageState extends State<ComplexPage>
               ),
             ),
             const Expanded(flex:1, child: SizedBox.shrink()),
-            Expanded(flex:1, child: IconButton(onPressed: () {}, icon: const Icon(Icons.search)))
+            Expanded(flex:1, child: IconButton(onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context){
+                return const SearchPage();
+              }));
+            }, icon: const Icon(Icons.search)))
           ],
         ),
         Expanded(

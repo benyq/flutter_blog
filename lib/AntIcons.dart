@@ -40,9 +40,11 @@ class AntIcons {
   static const IconData about = IconData(0xe6b4, fontFamily: 'AntIcons');
   static const IconData share = IconData(0xe674, fontFamily: 'AntIcons');
   static const IconData feedBack = IconData(0xe62e, fontFamily: 'AntIcons');
-  static const IconData rightArrow = IconData(0xe629, fontFamily: 'AntIcons');
 
+  static const IconData leftArrow = IconData(0xe67e, fontFamily: 'AntIcons');
+  static const IconData rightArrow = IconData(0xe684, fontFamily: 'AntIcons');
+  static const IconData closeFill = IconData(0xe6a6, fontFamily: 'AntIcons');
 
-
+  static const IconData hot = IconData(0xe71d, fontFamily: 'AntIcons');
 
 }
