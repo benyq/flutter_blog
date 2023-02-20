@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blog/page/complex/search/search_article_item.dart';
 import 'package:flutter_blog/widget/style.dart';
 
-import '../../AntIcons.dart';
+import '../../../AntIcons.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -14,6 +15,7 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   late TextEditingController _controller;
   bool _isShowClose = false;
+  bool _isShowSearchRecord = true;
 
   @override
   void initState() {
@@ -23,6 +25,7 @@ class _SearchPageState extends State<SearchPage> {
         var text = _controller.text;
         setState(() {
           _isShowClose = text.isNotEmpty;
+          _isShowSearchRecord = text.isEmpty;
         });
       });
   }
@@ -113,65 +116,92 @@ class _SearchPageState extends State<SearchPage> {
                   )
                 ],
               ),
-              // 搜索历史
-              Box.vBox15,
-              Row(
-                children: [
-                  const Expanded(
-                      child: Text(
-                    "搜索历史",
-                    style: TextStyle(fontSize: 16),
+              //搜索记录
+              Visibility(
+                  visible: _isShowSearchRecord,
+                  child: Expanded(
+                    flex: 1,
+                    child: Column(
+                      children: [
+                        // 搜索历史
+                        Box.vBox15,
+                        Row(
+                          children: [
+                            const Expanded(
+                                child: Text(
+                              "搜索历史",
+                              style: TextStyle(fontSize: 16),
+                            )),
+                            InkWell(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(50)),
+                              child: const Padding(
+                                padding: EdgeInsets.all(5),
+                                child: Icon(Icons.delete),
+                              ),
+                              onTap: () {},
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          width: double.infinity,
+                          child: Wrap(
+                            spacing: 8.0, // 主轴(水平)方向间距
+                            runSpacing: 4.0, // 纵轴（垂直）方向间距
+                            alignment: WrapAlignment.start, //沿主轴方向居中,
+                            children: [
+                              Chip(
+                                label: Text('Mulligan'),
+                              ),
+                              Chip(
+                                label: Text('Laurens'),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Box.vBox15,
+                        //热搜榜
+                        Row(
+                          children: const [
+                            Text(
+                              "热搜榜",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            Icon(
+                              AntIcons.hot,
+                              color: Color(0xFFF4EA2A),
+                            )
+                          ],
+                        ),
+                        Box.vBox15,
+                        Expanded(
+                            flex: 1,
+                            child: GridView.builder(
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                      childAspectRatio: 3, crossAxisCount: 2),
+                              itemBuilder: (context, index) {
+                                return InkWell(child: hotSearch(index, "2222"), onTap: (){},);
+                              },
+                              itemCount: 9,
+                            )),
+                      ],
+                    ),
                   )),
-                  InkWell(
-                    borderRadius: const BorderRadius.all(Radius.circular(50)),
-                    child: const Padding(
-                      padding: EdgeInsets.all(5),
-                      child: Icon(Icons.delete),
+              //搜索结果列表
+              Visibility(
+                  visible: !_isShowSearchRecord,
+                  child: Expanded(
+                    flex: 1,
+                    child: ListView.builder(
+                      itemBuilder: (context, index) {
+                        return SearchArticleItem(
+                          index: index,
+                          tapAction: (index) {},
+                        );
+                      },
+                      itemCount: 5,
                     ),
-                    onTap: () {},
-                  )
-                ],
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: Wrap(
-                  spacing: 8.0, // 主轴(水平)方向间距
-                  runSpacing: 4.0, // 纵轴（垂直）方向间距
-                  alignment: WrapAlignment.start, //沿主轴方向居中,
-                  children: [
-                    Chip(
-                      label: Text('Mulligan'),
-                    ),
-                    Chip(
-                      label: Text('Laurens'),
-                    ),
-                  ],
-                ),
-              ),
-              Box.vBox15,
-              Row(
-                children: const [
-                  Text(
-                    "热搜榜",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  Icon(
-                    AntIcons.hot,
-                    color: Color(0xFFF4EA2A),
-                  )
-                ],
-              ),
-              Box.vBox15,
-              Expanded(
-                  flex: 1,
-                  child: GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                            childAspectRatio: 3, crossAxisCount: 2),
-                    itemBuilder: (context, index) {
-                      return hotSearch(index, "2222");
-                    },
-                    itemCount: 9,
                   )),
             ],
           ),

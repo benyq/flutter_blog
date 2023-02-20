@@ -28,6 +28,7 @@ class _MainPageState extends State<MainPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFEDEDED),//这里是你期望的颜色
       body: SafeArea(
         child: TabBarView(
           controller: _tabController,

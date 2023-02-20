@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_blog/AntIcons.dart';
 
 import '../../http/request_repository.dart';
@@ -21,6 +22,11 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Color(0xFFEDEDED),
+          statusBarIconBrightness: Brightness.dark,
+          statusBarBrightness: Brightness.dark,
+        ),
         title: const Text('登录'),
         actions: [
           SizedBox(
@@ -32,10 +38,14 @@ class _LoginPageState extends State<LoginPage> {
                   child: Text(
                     "注册",
                     textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.black, fontSize: 15)
                   ),
                 ),
               ))
         ],
+        iconTheme: const IconThemeData(color: Colors.black),
+        titleTextStyle: const TextStyle(color: Colors.black, fontSize: 20),
+        backgroundColor: const Color(0xFFEDEDED),
       ),
       body: Column(
         children: [

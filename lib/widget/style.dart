@@ -7,4 +7,6 @@ class Box {
 
 
   static const vBox15 = SizedBox(height: 15,);
+
+  static const vBox10 = SizedBox(height: 10,);
 }

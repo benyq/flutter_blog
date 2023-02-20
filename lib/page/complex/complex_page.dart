@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blog/http/request.dart';
 import 'package:flutter_blog/page/complex/home_page.dart';
 import 'package:flutter_blog/page/complex/question_answer_page.dart';
-import 'package:flutter_blog/page/complex/search_page.dart';
+import 'package:flutter_blog/page/complex/search/search_page.dart';
 import 'package:flutter_blog/page/complex/square_page.dart';
 
 class ComplexPage extends StatefulWidget {

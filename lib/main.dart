@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'http/dio_http.dart';
 import 'page/main_page.dart';
 
 void main() async{
   final DioHttp _dioHttp = DioHttp();
   await _dioHttp.init();
+
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Color(0xFFEDEDED),
+      statusBarIconBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.dark,
+    ),
+  );
+
   runApp(const MyApp());
   debugPrint("benyq runApp");
 }
