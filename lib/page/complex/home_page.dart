@@ -2,6 +2,7 @@
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blog/page/article_page.dart';
 import 'package:flutter_blog/page/complex/widget/main_article_item.dart';
 
 class HomePage extends StatefulWidget {
@@ -37,9 +38,9 @@ class _HomePageState extends State<HomePage> {
           ),);
         }
         return MainArticleItem(index: index - 1, tapAction: (itemIndex) {
-
+          ArticlePage.toArticle(context);
         });
-      }, itemCount: 20,),
+      }, itemCount: 20, physics: const BouncingScrollPhysics(),),
     );
   }
 

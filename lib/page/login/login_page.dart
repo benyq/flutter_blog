@@ -33,12 +33,12 @@ class _LoginPageState extends State<LoginPage> {
               width: 50,
               child: InkWell(
                 onTap: () {},
-                child: Align(
+                child: const Align(
                   alignment: Alignment.center,
                   child: Text(
                     "注册",
                     textAlign: TextAlign.center,
-                      style: const TextStyle(color: Colors.black, fontSize: 15)
+                      style: TextStyle(color: Colors.black, fontSize: 15)
                   ),
                 ),
               ))
