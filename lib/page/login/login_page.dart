@@ -1,8 +1,11 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_blog/AntIcons.dart';
+import 'package:flutter_blog/model/user_info.dart';
+import 'package:flutter_blog/utils/sp_util.dart';
+import 'package:flutter_blog/utils/system_util.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../http/request_repository.dart';
 
@@ -32,14 +35,12 @@ class _LoginPageState extends State<LoginPage> {
           SizedBox(
               width: 50,
               child: InkWell(
-                onTap: () {},
+                onTap: _alertDialog,
                 child: const Align(
                   alignment: Alignment.center,
-                  child: Text(
-                    "注册",
-                    textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.black, fontSize: 15)
-                  ),
+                  child: Text("注册",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.black, fontSize: 15)),
                 ),
               ))
         ],
@@ -75,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                 )),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 20),
+            padding: const EdgeInsets.only(top: 40),
             child: ElevatedButton(
                 onPressed: () {
                   _login();
@@ -94,14 +95,49 @@ class _LoginPageState extends State<LoginPage> {
     _pwdController.dispose();
   }
 
-
   Future _login() async {
     var uname = _unameController.text;
     var pwd = _pwdController.text;
 
+    if (uname.isEmpty) {
+      showToast("用户名不能为空");
+      return;
+    }
+
+    if (pwd.isEmpty) {
+      showToast("密码不能为空");
+      return;
+    }
+
     debugPrint("uname:$uname, pwd: $pwd");
 
     var repository = RequestRepository();
-    repository.login("yzjbenyq", "yezijian520");
+    repository.login(uname, pwd, success: (data) {
+      var user = UserInfo.fromJson(data);
+      SPUtil.putUserInfo(user);
+      showToast("登录成功");
+      Navigator.pop(context, user);
+    }, fail: (code, msg) {
+      showToast("登录失败，错误: $msg");
+    });
   }
+
+  _alertDialog() async {
+    var alertDialogs = await showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text("提示"),
+            content: const Text("懒得做了，去WanAndroid网站上注册吧，哥们"),
+            actions: <Widget>[
+              ElevatedButton(
+                  child: const Text("好吧，懒鬼!"),
+                  onPressed: () => Navigator.pop(context, "yes")),
+            ],
+          );
+        });
+    return alertDialogs;
+  }
+
+
 }

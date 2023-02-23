@@ -4,6 +4,8 @@ import 'dart:ui';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_blog/http/request_api.dart';
+import 'package:flutter_blog/model/user_info.dart';
+import 'package:flutter_blog/utils/sp_util.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
@@ -74,7 +76,7 @@ class DioHttp {
 
     Options options = Options(
       method: methodValues[method],
-      // headers: headers,
+      headers: _headerToken(),
     );
 
     try {
@@ -95,6 +97,19 @@ class DioHttp {
     debugPrint("appDocPath: $appDocPath");
     var cookieJar = PersistCookieJar(storage: FileStorage("$appDocPath/.cookies/"));
     return Future.value(cookieJar);
+  }
+
+  /// 请求时添加cookie
+  Map<String, dynamic>? _headerToken(){
+    /// 自定义Header,如需要添加token信息请调用此参数
+    UserInfo? info = SPUtil.getUserInfo();
+    if(info == null){
+      return null;
+    }
+    Map<String, dynamic> httpHeaders = {
+      'Cookie': 'loginUserName=${info.username};loginUserPassword=${info.password}',
+    };
+    return httpHeaders;
   }
 }
 

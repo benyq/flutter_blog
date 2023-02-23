@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_blog/http/dio_http.dart';
 
 typedef Success<T> = void Function(T data);
@@ -13,7 +13,14 @@ class Request {
     Success? success,
     Fail? fail,
   }) {
-    return _request(path, HttpMethod.get, queryParameters: queryParameters, success: success, fail: fail);
+    return _request(path, HttpMethod.get, queryParameters: queryParameters,
+        success: (res) {
+      debugPrint("success: $res");
+      success?.call(res['data']);
+    }, fail: (int code, String msg) {
+      debugPrint("fail: $code, $msg");
+      fail?.call(code, msg);
+    });
   }
 
   static post(
@@ -22,7 +29,13 @@ class Request {
     Success? success,
     Fail? fail,
   }) {
-    return _request(path, HttpMethod.post, data: data, success: success, fail: fail);
+    return _request(path, HttpMethod.post, data: data, success: (res) {
+      debugPrint("success: $res");
+      success?.call(res['data']);
+    }, fail: (int code, String msg) {
+      debugPrint("fail: $code, $msg");
+      fail?.call(code, msg);
+    });
   }
 
   static Future _request(String path, HttpMethod method,

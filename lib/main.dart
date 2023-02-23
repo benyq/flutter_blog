@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_blog/utils/sp_util.dart';
 import 'http/dio_http.dart';
 import 'page/main_page.dart';
 
 void main() async{
-  final DioHttp _dioHttp = DioHttp();
-  await _dioHttp.init();
+  WidgetsFlutterBinding.ensureInitialized();
+  SPUtil.init();
+  final DioHttp dioHttp = DioHttp();
+  await dioHttp.init();
 
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(

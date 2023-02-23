@@ -1,9 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_blog/AntIcons.dart';
 import 'package:flutter_blog/page/login/login_page.dart';
-import 'package:flutter_blog/widget/style.dart';
+import 'package:flutter_blog/utils/sp_util.dart';
+
+import '../model/user_info.dart';
 
 class MinePage extends StatefulWidget {
   const MinePage({super.key});
@@ -13,6 +16,15 @@ class MinePage extends StatefulWidget {
 }
 
 class _MinePageState extends State<MinePage> {
+
+  UserInfo? _user;
+
+  @override
+  void initState() {
+    super.initState();
+    _user = SPUtil.getUserInfo();
+  }
+
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
@@ -28,7 +40,7 @@ class _MinePageState extends State<MinePage> {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) {
                       return const LoginPage();
-                    }));
+                    })).then((value) => _handleLoginResult);
                   },
                   child: Container(
                     width: 80,
@@ -42,11 +54,18 @@ class _MinePageState extends State<MinePage> {
                           BoxShadow(color: Colors.grey, blurRadius: 6)
                         ]),
                     child: ClipOval(
-                        child: Image.asset(
-                      "assets/images/ic_complex.png",
+                        child: CachedNetworkImage(
+                      imageUrl:
+                          "https://www.wanandroid.com/resources/image/pc/logo.png",
                       width: 60,
                       height: 60,
                       fit: BoxFit.cover,
+                      progressIndicatorBuilder:
+                          (context, url, downloadProgress) =>
+                              CircularProgressIndicator(
+                                  value: downloadProgress.progress),
+                      errorWidget: (context, url, error) =>
+                          const Icon(Icons.error),
                     )),
                   ),
                 ),
@@ -54,8 +73,8 @@ class _MinePageState extends State<MinePage> {
                     child: Padding(
                   padding: const EdgeInsets.only(left: 10),
                   child: Text(
-                    "Benyq",
-                    style: TextStyle(fontSize: 20),
+                    _user?.username ?? "未登录",
+                    style: const TextStyle(fontSize: 20),
                   ),
                 )),
                 const DecoratedBox(
@@ -84,30 +103,30 @@ class _MinePageState extends State<MinePage> {
               padding: const EdgeInsets.all(15),
               child: Flex(
                 direction: Axis.horizontal,
-                children: const [
+                children: [
                   Expanded(
-                    child: ScoreWidget("收藏", "1"),
                     flex: 2,
+                    child: ScoreWidget("收藏", _user?.collectIds.length ?? 0),
                   ),
-                  Spacer(
+                  const Spacer(
+                    flex: 1,
+                  ),
+                  const Expanded(
+                    flex: 2,
+                    child: ScoreWidget("分享", 0),
+                  ),
+                  const Spacer(
                     flex: 1,
                   ),
                   Expanded(
-                    child: ScoreWidget("分享", "2"),
                     flex: 2,
+                    child: ScoreWidget("积分", _user?.coinCount ?? 0),
                   ),
-                  Spacer(
+                  const Spacer(
                     flex: 1,
                   ),
                   Expanded(
-                    child: ScoreWidget("积分", "3"),
-                    flex: 2,
-                  ),
-                  Spacer(
-                    flex: 1,
-                  ),
-                  Expanded(
-                    child: ScoreWidget("历史", "4"),
+                    child: ScoreWidget("历史", 0),
                     flex: 2,
                   ),
                 ],
@@ -142,6 +161,13 @@ class _MinePageState extends State<MinePage> {
         ],
       ),
     );
+  }
+
+
+  void _handleLoginResult(UserInfo result) {
+    setState(() {
+      _user = result;
+    });
   }
 }
 
@@ -181,14 +207,14 @@ class FunctionItem extends StatelessWidget {
 class ScoreWidget extends StatelessWidget {
   const ScoreWidget(this.title, this.score, {super.key});
 
-  final String score;
+  final int score;
   final String title;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(score,
+        Text('$score',
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
         const SizedBox(
           height: 10,
