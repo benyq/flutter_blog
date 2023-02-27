@@ -2,8 +2,12 @@
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blog/http/request_repository.dart';
+import 'package:flutter_blog/model/article_model.dart';
 import 'package:flutter_blog/page/article_page.dart';
 import 'package:flutter_blog/page/complex/widget/main_article_item.dart';
+
+import '../../model/banners.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,6 +19,22 @@ class HomePage extends StatefulWidget {
 
 
 class _HomePageState extends State<HomePage> {
+
+  var repository = RequestRepository();
+  late List<Banners> _bannerList = [];
+  late List<ArticleModel> _homeArticles = [];
+
+  int _page = 0;
+  bool _isover = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    getBanners();
+    getArticleData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -25,23 +45,51 @@ class _HomePageState extends State<HomePage> {
         if (index == 0) {
           return SizedBox(height: 200, width: double.infinity, child: Swiper(
             itemBuilder: (BuildContext context, int index) {
+              var banner = _bannerList[index];
               return InkWell(child: ClipRRect(borderRadius: BorderRadius.circular(10),
                 child: Image.network(
-                  "https://via.placeholder.com/288x188",
+                  banner.imagePath,
                   fit: BoxFit.fill,
-                ),),onTap: (){},);
+                ),),onTap: (){
+                ArticlePage.toArticle(context, banner.title, banner.url);
+              },);
             },
-            itemCount: 10,
+            itemCount: _bannerList.length,
             scale: 0.75,
             pagination: const SwiperPagination(),
             autoplay: true,
+            duration: 1000,
           ),);
         }
-        return MainArticleItem(index: index - 1, tapAction: (itemIndex) {
-          ArticlePage.toArticle(context);
+
+        if (index == _homeArticles.length - 3) {
+          _page++;
+          getArticleData();
+        }
+
+        var homeArticle = _homeArticles[index - 1];
+        return MainArticleItem(index: index - 1, homeArticle: homeArticle, tapAction: (itemIndex) {
+          ArticlePage.toArticle(context, homeArticle.title, homeArticle.link);
         });
-      }, itemCount: 20, physics: const BouncingScrollPhysics(),),
+      }, itemCount: _homeArticles.length + 1, physics: const BouncingScrollPhysics(),),
     );
+  }
+
+  void getBanners() {
+    repository.banner(success: (List<Banners> data){
+      setState(() {
+        _bannerList = data;
+      });
+    }, fail: (code, msg){});
+  }
+
+  void getArticleData() {
+    repository.homeArticle(_page, success: (List<ArticleModel> data, bool over){
+      _isover = over;
+      setState(() {
+        _homeArticles.addAll(data);
+      });
+    }, fail: (code, msg){});
   }
 
 }

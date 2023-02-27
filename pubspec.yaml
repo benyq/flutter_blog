@@ -49,6 +49,7 @@ dependencies:
   shared_preferences: ^2.0.18
 
   json_annotation: ^4.8.0
+  html_unescape: ^2.0.0
 
 dev_dependencies:
   flutter_test:

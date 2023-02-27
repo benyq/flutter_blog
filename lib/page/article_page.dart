@@ -1,19 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../widget/common_app_bar.dart';
 import '../widget/style.dart';
 
 class ArticlePage extends StatefulWidget {
-  static void toArticle(BuildContext context) {
+  static void toArticle(BuildContext context, String title, String url) {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return const ArticlePage();
+      return ArticlePage(title, url);
     }));
   }
 
-  const ArticlePage({super.key});
+  ArticlePage(this.title, this.url, {super.key});
+
+  String title;
+  String url;
 
   @override
   State<StatefulWidget> createState() => _ArticlePageState();
@@ -21,7 +23,9 @@ class ArticlePage extends StatefulWidget {
 
 class _ArticlePageState extends State<ArticlePage> {
   late WebViewController _webviewController;
-  String articleTitle = "";
+
+  var _loading = true;
+  var _progress = 0.0;
 
   @override
   void initState() {
@@ -32,17 +36,23 @@ class _ArticlePageState extends State<ArticlePage> {
       ..setNavigationDelegate(
         NavigationDelegate(
           onProgress: (int progress) {
-            // Update loading bar.
+            setState(() {
+              _progress = progress * 1.0 / 100.0;
+            });
           },
           onPageStarted: (String url) {},
-          onPageFinished: (String url) {},
+          onPageFinished: (String url) {
+            setState(() {
+              _loading = false;
+            });
+          },
           onWebResourceError: (WebResourceError error) {},
           onNavigationRequest: (NavigationRequest request) {
             return NavigationDecision.navigate;
           },
         ),
       )
-      ..loadRequest(Uri.parse('https://www.baidu.com/'));
+      ..loadRequest(Uri.parse(widget.url));
   }
 
   @override
@@ -50,7 +60,7 @@ class _ArticlePageState extends State<ArticlePage> {
     return WillPopScope(
         child: Scaffold(
           appBar: commonAppBar(
-            title: Text(articleTitle),
+            title: Text(widget.title),
             actions: [
               UnconstrainedBox(
                 child: SizedBox.square(
@@ -64,7 +74,20 @@ class _ArticlePageState extends State<ArticlePage> {
               Box.hBox6
             ],
           ),
-          body: WebViewWidget(controller: _webviewController),
+          body: Stack(
+            children: [
+              WebViewWidget(controller: _webviewController),
+              Visibility(
+                  visible: _loading,
+                  child: SizedBox(
+                    height: 3,
+                    width: double.infinity,
+                    child: LinearProgressIndicator(
+                      value: _progress,
+                    ),
+                  ))
+            ],
+          ),
         ),
         onWillPop: () => _exitPage(context));
   }

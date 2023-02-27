@@ -112,8 +112,7 @@ class _LoginPageState extends State<LoginPage> {
     debugPrint("uname:$uname, pwd: $pwd");
 
     var repository = RequestRepository();
-    repository.login(uname, pwd, success: (data) {
-      var user = UserInfo.fromJson(data);
+    repository.login(uname, pwd, success: (user) {
       SPUtil.putUserInfo(user);
       showToast("登录成功");
       Navigator.pop(context, user);

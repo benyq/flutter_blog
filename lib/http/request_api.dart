@@ -4,5 +4,7 @@ class RequestApi {
 
   static const String login = '$baseurl/user/login';
 
-  static const String banner = '$baseurl/article/list/0/json';
+  static const String banner = '$baseurl/banner/json';
+
+  static const String homeArticle = '$baseurl/article/list/{page}/json';
 }

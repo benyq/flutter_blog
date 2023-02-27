@@ -1,12 +1,20 @@
+import 'package:flutter_blog/widget/style.dart';
+import 'package:html_unescape/html_unescape.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blog/model/article_model.dart';
 
 class MainArticleItem extends StatelessWidget {
-
   int index = 0;
+  ArticleModel homeArticle;
   Function(int)? tapAction;
 
-  MainArticleItem({Key? key, required this.index, this.tapAction}) : super(key: key);
+  MainArticleItem(
+      {Key? key,
+      required this.index,
+      required this.homeArticle,
+      this.tapAction})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,11 +23,13 @@ class MainArticleItem extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 10),
         margin: const EdgeInsets.symmetric(vertical: 10),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text.rich(
                 maxLines: 2,
                 softWrap: true,
                 overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.start,
                 TextSpan(children: [
                   WidgetSpan(
                       child: Visibility(
@@ -33,33 +43,60 @@ class MainArticleItem extends StatelessWidget {
                                 horizontal: 3, vertical: 2),
                             child: const Text(
                               "荐",
-                              style: TextStyle(color: Colors.white, fontSize: 12),
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 12),
                             ),
                           ))),
                   TextSpan(
-                    text: "电子烟新规发布，为什么电子烟必须含有烟碱？电子烟新规发布，为什么电子烟必须含有烟碱？",
+                    text: HtmlUnescape().convert(homeArticle.title),
                     style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Colors.black),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Colors.black,
+                    ),
                   )
                 ])),
-            Padding(padding: const EdgeInsets.only(top: 5),
+            Box.vBox10,
+            Padding(
+              padding: const EdgeInsets.only(top: 5),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text("热门专题", style: TextStyle(color: Colors.orange.shade600),),
-                  const SizedBox(width: 10,),
+                  ConstrainedBox(constraints: const BoxConstraints(maxWidth: 100)
+                  ,child: Text(
+                      homeArticle.superChapterName,
+                      style: TextStyle(color: Colors.orange.shade600),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),),
+                  const SizedBox(
+                    width: 10,
+                  ),
                   const Text("|"),
-                  const SizedBox(width: 10,),
-                  Text("张鸿洋", style: TextStyle(color: Colors.grey.shade600),),
-                  const SizedBox(width: 10,),
-                  Text("一天前", style: TextStyle(color: Colors.grey.shade600),),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    homeArticle.shareUser.isEmpty
+                        ? homeArticle.author
+                        : homeArticle.shareUser,
+                    style: TextStyle(color: Colors.grey.shade600),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    homeArticle.niceDate,
+                    style: TextStyle(color: Colors.grey.shade600),
+                  ),
                 ],
-              ),)
+              ),
+            )
           ],
         ),
       ),
       onTap: () {
+
         tapAction?.call(index);
       },
     );

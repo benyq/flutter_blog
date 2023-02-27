@@ -37,10 +37,7 @@ class _MinePageState extends State<MinePage> {
               children: [
                 InkWell(
                   onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                      return const LoginPage();
-                    })).then((value) => _handleLoginResult);
+                    _navigateLogin();
                   },
                   child: Container(
                     width: 80,
@@ -143,10 +140,14 @@ class _MinePageState extends State<MinePage> {
               child: Column(
                 children: [
                   FunctionItem(AntIcons.person, "个人信息", () {
-                    debugPrint("1");
+                    if (_checkLoginState()) {
+
+                    }else {
+                      _navigateLogin();
+                    }
                   }),
                   FunctionItem(AntIcons.about, "关于", () {
-                    debugPrint("2");
+
                   }),
                   FunctionItem(AntIcons.share, "分享", () {
                     debugPrint("3");
@@ -168,6 +169,17 @@ class _MinePageState extends State<MinePage> {
     setState(() {
       _user = result;
     });
+  }
+
+  bool _checkLoginState() {
+    return _user != null;
+  }
+
+  void _navigateLogin() {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) {
+          return const LoginPage();
+        })).then((value) => _handleLoginResult);
   }
 }
 
