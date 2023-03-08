@@ -50,4 +50,6 @@ class AntIcons {
   static const IconData postTime = IconData(0xe60a, fontFamily: 'AntIcons');
   static const IconData postAuthor = IconData(0xe645, fontFamily: 'AntIcons');
 
+  static const IconData more = IconData(0xe6cb, fontFamily: 'AntIcons');
+
 }

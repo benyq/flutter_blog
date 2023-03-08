@@ -7,4 +7,8 @@ class RequestApi {
   static const String banner = '$baseurl/banner/json';
 
   static const String homeArticle = '$baseurl/article/list/{page}/json';
+
+  static const String projectCategory = '$baseurl/project/tree/json';
+
+  static const String project = '$baseurl/project/list/{page}/json';
 }

@@ -6,6 +6,8 @@
 import 'package:flutter/material.dart' show debugPrint;
 import 'package:flutter_blog/model/article_model.dart';
 import 'package:flutter_blog/model/banners.dart';
+import 'package:flutter_blog/model/project_category.dart';
+import 'package:flutter_blog/model/project_model.dart';
 import 'package:flutter_blog/model/user_info.dart';
 
 JsonConvert jsonConvert = JsonConvert();
@@ -17,6 +19,9 @@ class JsonConvert {
 		(ArticleModel).toString(): ArticleModel.fromJson,
 		(ArticleModelTags).toString(): ArticleModelTags.fromJson,
 		(Banners).toString(): Banners.fromJson,
+		(ProjectCategory).toString(): ProjectCategory.fromJson,
+		(ProjectModel).toString(): ProjectModel.fromJson,
+		(ProjectModelTags).toString(): ProjectModelTags.fromJson,
 		(UserInfo).toString(): UserInfo.fromJson,
 	};
 
@@ -104,6 +109,15 @@ List<T>? convertListNotNull<T>(dynamic value, {EnumConvertFunction? enumConvert}
 		}
 		if(<Banners>[] is M){
 			return data.map<Banners>((Map<String, dynamic> e) => Banners.fromJson(e)).toList() as M;
+		}
+		if(<ProjectCategory>[] is M){
+			return data.map<ProjectCategory>((Map<String, dynamic> e) => ProjectCategory.fromJson(e)).toList() as M;
+		}
+		if(<ProjectModel>[] is M){
+			return data.map<ProjectModel>((Map<String, dynamic> e) => ProjectModel.fromJson(e)).toList() as M;
+		}
+		if(<ProjectModelTags>[] is M){
+			return data.map<ProjectModelTags>((Map<String, dynamic> e) => ProjectModelTags.fromJson(e)).toList() as M;
 		}
 		if(<UserInfo>[] is M){
 			return data.map<UserInfo>((Map<String, dynamic> e) => UserInfo.fromJson(e)).toList() as M;
