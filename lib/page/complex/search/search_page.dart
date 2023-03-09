@@ -163,7 +163,12 @@ class _SearchPageState extends State<SearchPage> {
                                         padding: EdgeInsets.all(5),
                                         child: Icon(Icons.delete),
                                       ),
-                                      onTap: () {},
+                                      onTap: () {
+                                        setState(() {
+                                          _searchHistories = [];
+                                        });
+                                        SPUtil.putSearchHistory([]);
+                                      },
                                     )
                                   ],
                                 ),
