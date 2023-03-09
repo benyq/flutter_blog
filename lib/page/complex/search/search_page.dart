@@ -1,6 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blog/http/request_repository.dart';
+import 'package:flutter_blog/model/article_model.dart';
+import 'package:flutter_blog/model/hot_key.dart';
+import 'package:flutter_blog/page/article_page.dart';
 import 'package:flutter_blog/page/complex/search/search_article_item.dart';
+import 'package:flutter_blog/utils/sp_util.dart';
 import 'package:flutter_blog/widget/style.dart';
 
 import '../../../AntIcons.dart';
@@ -14,8 +19,16 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   late TextEditingController _controller;
+
+  //输入框 删除 按钮
   bool _isShowClose = false;
-  bool _isShowSearchRecord = true;
+  //控制显示搜索历史与搜索结果的bool
+  bool _isShowSearchHistoryAndHotKey = true;
+  bool _isLoading = false;
+  late RequestRepository repository;
+  List<HotKey> _hotKeys = [];
+  List<ArticleModel> _searchArticleResult = [];
+  List<String> _searchHistories = [];
 
   @override
   void initState() {
@@ -25,9 +38,16 @@ class _SearchPageState extends State<SearchPage> {
         var text = _controller.text;
         setState(() {
           _isShowClose = text.isNotEmpty;
-          _isShowSearchRecord = text.isEmpty;
+          if (text.isEmpty) {
+            _isShowSearchHistoryAndHotKey = true;
+          }
         });
       });
+
+    repository = RequestRepository();
+    _hotKey();
+
+    _initSearchRecord();
   }
 
   @override
@@ -118,47 +138,55 @@ class _SearchPageState extends State<SearchPage> {
               ),
               //搜索记录
               Visibility(
-                  visible: _isShowSearchRecord,
+                  visible: _isShowSearchHistoryAndHotKey,
                   child: Expanded(
                     flex: 1,
                     child: Column(
                       children: [
                         // 搜索历史
-                        Box.vBox15,
-                        Row(
-                          children: [
-                            const Expanded(
-                                child: Text(
-                              "搜索历史",
-                              style: TextStyle(fontSize: 16),
+                        Visibility(
+                            visible: _searchHistories.isNotEmpty,
+                            child: Column(
+                              children: [
+                                Box.vBox15,
+                                Row(
+                                  children: [
+                                    const Expanded(
+                                        child: Text(
+                                      "搜索历史",
+                                      style: TextStyle(fontSize: 16),
+                                    )),
+                                    InkWell(
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(50)),
+                                      child: const Padding(
+                                        padding: EdgeInsets.all(5),
+                                        child: Icon(Icons.delete),
+                                      ),
+                                      onTap: () {},
+                                    )
+                                  ],
+                                ),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: Wrap(
+                                    spacing: 8.0, // 主轴(水平)方向间距
+                                    runSpacing: 4.0, // 纵轴（垂直）方向间距
+                                    alignment: WrapAlignment.start, //沿主轴方向居中,
+                                    children: _searchHistories.map((e) {
+                                      return InkWell(
+                                        child: Chip(
+                                          label: Text(e),
+                                        ),
+                                        onTap: () {
+                                          _searchContentAuto(e);
+                                        },
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+                              ],
                             )),
-                            InkWell(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(50)),
-                              child: const Padding(
-                                padding: EdgeInsets.all(5),
-                                child: Icon(Icons.delete),
-                              ),
-                              onTap: () {},
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          width: double.infinity,
-                          child: Wrap(
-                            spacing: 8.0, // 主轴(水平)方向间距
-                            runSpacing: 4.0, // 纵轴（垂直）方向间距
-                            alignment: WrapAlignment.start, //沿主轴方向居中,
-                            children: [
-                              Chip(
-                                label: Text('Mulligan'),
-                              ),
-                              Chip(
-                                label: Text('Laurens'),
-                              ),
-                            ],
-                          ),
-                        ),
                         Box.vBox15,
                         //热搜榜
                         Row(
@@ -181,26 +209,61 @@ class _SearchPageState extends State<SearchPage> {
                                   const SliverGridDelegateWithFixedCrossAxisCount(
                                       childAspectRatio: 3, crossAxisCount: 2),
                               itemBuilder: (context, index) {
-                                return InkWell(child: hotSearch(index, "2222"), onTap: (){},);
+                                var hotKey = _hotKeys[index];
+                                return InkWell(
+                                  child: hotSearch(index + 1, hotKey.name),
+                                  onTap: () {
+                                    _searchContentAuto(hotKey.name);
+                                  },
+                                );
                               },
-                              itemCount: 9,
+                              itemCount: _hotKeys.length,
                             )),
                       ],
                     ),
                   )),
-              //搜索结果列表
+              //搜索结果列表与loading
               Visibility(
-                  visible: !_isShowSearchRecord,
+                  visible: !_isShowSearchHistoryAndHotKey,
                   child: Expanded(
                     flex: 1,
-                    child: ListView.builder(
-                      itemBuilder: (context, index) {
-                        return SearchArticleItem(
-                          index: index,
-                          tapAction: (index) {},
-                        );
-                      },
-                      itemCount: 5,
+                    child: Stack(
+                      children: [
+                        ListView.separated(
+                          separatorBuilder: (context, index) {
+                            return const Divider(
+                              color: Colors.grey,
+                            );
+                          },
+                          itemBuilder: (context, index) {
+                            var articleModel = _searchArticleResult[index];
+                            return SearchArticleItem(
+                              articleModel: articleModel,
+                              tapAction: () {
+                                var title = articleModel.title
+                                    .replaceAll('<em class=\'highlight\'>', '');
+                                title = title.replaceAll('</em>', '');
+                                ArticlePage.toArticle(
+                                    context, title, articleModel.link);
+                              },
+                            );
+                          },
+                          itemCount: _searchArticleResult.length,
+                        ),
+                        Visibility(
+                            visible: _isLoading,
+                            child: const Align(
+                              alignment: Alignment.center,
+                              child: CircularProgressIndicator(),
+                            )),
+                        Visibility(
+                          visible: _searchArticleResult.isEmpty && !_isLoading,
+                          child: const Align(
+                            alignment: Alignment.center,
+                            child: Text("搜索结果为空", style: TextStyle(fontSize: 16),),
+                          ),
+                        )
+                      ],
                     ),
                   )),
             ],
@@ -210,15 +273,80 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
+//  点击搜索按钮
   void _searchContent() {
     var content = _controller.text;
     debugPrint("searchContent: $content");
+
+    //开始搜索
+    setState(() {
+      _isLoading = true;
+      _isShowSearchHistoryAndHotKey = false;
+      _searchArticleResult = [];
+    });
+    _searchArticle(content);
+    _putSearchRecord(content);
+  }
+
+//  点击搜索历史和热搜榜
+  void _searchContentAuto(String key) {
+    _controller.text = key;
+    _controller.selection = TextSelection.fromPosition(
+        TextPosition(affinity: TextAffinity.downstream, offset: key.length));
+
+    _searchContent();
   }
 
   @override
   void dispose() {
     super.dispose();
     _controller.dispose();
+  }
+
+  void _initSearchRecord() {
+    var data = SPUtil.getSearchHistory();
+    setState(() {
+      _searchHistories = data;
+    });
+  }
+
+  void _putSearchRecord(String key) {
+    var set = _searchHistories.toSet();
+    set.remove(key);
+    var newData = set.toList();
+    newData.insert(0, key);
+    //判断长度，最多9个
+    if (newData.length > 9) {
+      newData = newData.sublist(0, 9);
+    }
+    SPUtil.putSearchHistory(newData);
+    setState(() {
+      _searchHistories = newData;
+    });
+  }
+
+  void _hotKey() {
+    repository.hotkey(
+        success: (data) {
+          setState(() {
+            data.sort((a, b) => a.order - b.order);
+            _hotKeys = data;
+          });
+        },
+        fail: (code, msg) {});
+  }
+
+  void _searchArticle(String key) {
+    repository.searchArticle(0, key, success: (data, isOver) {
+      setState(() {
+        _searchArticleResult = data;
+        _isLoading = false;
+      });
+    }, fail: (code, msg) {
+      setState(() {
+        _isLoading = false;
+      });
+    });
   }
 
   Widget hotSearch(int index, String data) {

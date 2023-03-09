@@ -23,7 +23,7 @@ class _ProjectPageState extends State<ProjectPage>
   late HtmlUnescape htmlUnescape;
 
   int _cid = 0;
-  int _page = 1;
+  int _page = 0;
   bool _isOver = false;
 
   @override
@@ -80,7 +80,7 @@ class _ProjectPageState extends State<ProjectPage>
           });
           //开始加载默认的project：完整项目 cid = 294
           _cid = _projectCategories[0].id;
-          _page = 1;
+          _page = 0;
           _requestProjects();
         },
         fail: (code, msg) {});

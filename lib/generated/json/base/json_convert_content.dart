@@ -6,6 +6,7 @@
 import 'package:flutter/material.dart' show debugPrint;
 import 'package:flutter_blog/model/article_model.dart';
 import 'package:flutter_blog/model/banners.dart';
+import 'package:flutter_blog/model/hot_key.dart';
 import 'package:flutter_blog/model/project_category.dart';
 import 'package:flutter_blog/model/project_model.dart';
 import 'package:flutter_blog/model/user_info.dart';
@@ -19,6 +20,7 @@ class JsonConvert {
 		(ArticleModel).toString(): ArticleModel.fromJson,
 		(ArticleModelTags).toString(): ArticleModelTags.fromJson,
 		(Banners).toString(): Banners.fromJson,
+		(HotKey).toString(): HotKey.fromJson,
 		(ProjectCategory).toString(): ProjectCategory.fromJson,
 		(ProjectModel).toString(): ProjectModel.fromJson,
 		(ProjectModelTags).toString(): ProjectModelTags.fromJson,
@@ -109,6 +111,9 @@ List<T>? convertListNotNull<T>(dynamic value, {EnumConvertFunction? enumConvert}
 		}
 		if(<Banners>[] is M){
 			return data.map<Banners>((Map<String, dynamic> e) => Banners.fromJson(e)).toList() as M;
+		}
+		if(<HotKey>[] is M){
+			return data.map<HotKey>((Map<String, dynamic> e) => HotKey.fromJson(e)).toList() as M;
 		}
 		if(<ProjectCategory>[] is M){
 			return data.map<ProjectCategory>((Map<String, dynamic> e) => ProjectCategory.fromJson(e)).toList() as M;

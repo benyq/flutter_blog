@@ -11,4 +11,9 @@ class RequestApi {
   static const String projectCategory = '$baseurl/project/tree/json';
 
   static const String project = '$baseurl/project/list/{page}/json';
+
+  static const String hotKey = '$baseurl/hotkey/json';
+
+  static const String search = '$baseurl/article/query/{page}/json';
+
 }

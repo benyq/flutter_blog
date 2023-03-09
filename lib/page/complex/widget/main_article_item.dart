@@ -96,7 +96,6 @@ class MainArticleItem extends StatelessWidget {
         ),
       ),
       onTap: () {
-
         tapAction?.call(index);
       },
     );

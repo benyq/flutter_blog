@@ -31,6 +31,10 @@ class SPUtil {
     return _prefs.getString(key);
   }
 
+  static List<String>? readList(String key) {
+    return _prefs.getStringList(key);
+  }
+
   static putUserInfo(UserInfo user) {
     write(SPKey.userInfo, jsonEncode(user.toJson()));
   }
@@ -47,5 +51,20 @@ class SPUtil {
       debugPrint(e.toString());
       return null;
     }
+  }
+
+  static List<String> getSearchHistory() {
+      try {
+        var data =  readList(SPKey.searchList);
+        debugPrint("$data");
+        return data ?? [];
+      }catch (e) {
+        debugPrint(e.toString());
+        return [];
+      }
+  }
+
+  static void putSearchHistory(List<String> histories) {
+    write(SPKey.searchList, histories);
   }
 }

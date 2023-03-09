@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_blog/http/request.dart';
 import 'package:flutter_blog/http/request_api.dart';
 import 'package:flutter_blog/model/article_model.dart';
+import 'package:flutter_blog/model/hot_key.dart';
 import 'package:flutter_blog/model/page_model.dart';
 import 'package:flutter_blog/model/project_category.dart';
 
@@ -68,6 +69,29 @@ class RequestRepository {
         return ProjectModel.fromJson(value);
       }).toList();
       success?.call(projects, pageData.over);
+    }, fail: fail);
+  }
+
+  hotkey({Success<List<HotKey>>? success, Fail? fail}) {
+    Request.get<dynamic>(RequestApi.hotKey, {}, success: (data){
+      List<HotKey> hotkeys = data.map<HotKey>((value) {
+        return HotKey.fromJson(value);
+      }).toList();
+      success?.call(hotkeys);
+    }, fail: fail);
+  }
+
+  searchArticle(int page, String key, {SuccessOver<List<ArticleModel>>? success, Fail? fail}) {
+    var path = RequestApi.search.replaceAll("{page}", '$page');
+    var formData = FormData.fromMap({
+      'k': key,
+    });
+    Request.post<dynamic>(path, formData, success: (data){
+      PageModel pageData = PageModel.fromJson(data);
+      List<ArticleModel> articles = pageData.datas.map((value) {
+        return ArticleModel.fromJson(value);
+      }).toList();
+      success?.call(articles, pageData.over);
     }, fail: fail);
   }
 }
