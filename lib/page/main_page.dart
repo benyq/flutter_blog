@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blog/AntIcons.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'mine_page.dart';
+import 'mine/mine_page.dart';
 import 'project/project_page.dart';
 import 'complex/complex_page.dart';
 

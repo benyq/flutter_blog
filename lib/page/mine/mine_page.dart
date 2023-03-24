@@ -6,7 +6,8 @@ import 'package:flutter_blog/AntIcons.dart';
 import 'package:flutter_blog/page/login/login_page.dart';
 import 'package:flutter_blog/utils/sp_util.dart';
 
-import '../model/user_info.dart';
+import '../../model/user_info.dart';
+import 'about_app_page.dart';
 
 class MinePage extends StatefulWidget {
   const MinePage({super.key});
@@ -147,7 +148,9 @@ class _MinePageState extends State<MinePage> {
                     }
                   }),
                   FunctionItem(AntIcons.about, "关于", () {
-
+                    Navigator.push(context, MaterialPageRoute(builder: (context){
+                      return AboutAppPage();
+                    }));
                   }),
                   FunctionItem(AntIcons.share, "分享", () {
                     debugPrint("3");
