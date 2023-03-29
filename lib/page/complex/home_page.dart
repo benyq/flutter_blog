@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:card_swiper/card_swiper.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blog/http/request_repository.dart';
 import 'package:flutter_blog/model/article_model.dart';
@@ -16,7 +15,7 @@ class HomePage extends StatefulWidget {
   State<StatefulWidget> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin{
   var repository = RequestRepository();
   late List<Banners> _bannerList = [];
   late List<ArticleModel> _homeArticles = [];
@@ -110,4 +109,7 @@ class _HomePageState extends State<HomePage> {
       });
     }, fail: (code, msg) {});
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
